@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- 微信分享meta标签 -->
+    <meta property="og:title" content="2026新年祝福">
+    <meta property="og:description" content="2026，愿万事如意，心想事成">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <title>2026新年祝福</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .container {
+            position: relative;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            animation: backgroundChange 8s ease-in-out forwards;
+        }
+
+        @keyframes backgroundChange {
+            0% {
+                background: linear-gradient(135deg, #1a1a2e, #16213e);
+            }
+            50% {
+                background: linear-gradient(135deg, #16213e, #0f3460);
+            }
+            100% {
+                background: linear-gradient(135deg, #ffd700, #ff6b6b, #4ecdc4);
+            }
+        }
+
+        #snowCanvas,
+        #fireworksCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        #fireworksCanvas {
+            z-index: 2;
+        }
+
+        .text-container {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+        }
+
+        .year-2025,
+        .year-2026 {
+            font-size: clamp(2rem, 10vw, 5rem);
+            font-weight: bold;
+            margin: 1rem 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .year-2025 {
+            color: #a8a8a8;
+            animation: fadeOut 4s ease-in-out forwards;
+        }
+
+        .year-2026 {
+            color: #ffd700;
+            opacity: 0;
+            transform: scale(0.8);
+            animation: fadeInScale 4s ease-in-out forwards 4s;
+        }
+
+        .message {
+            font-size: clamp(1rem, 5vw, 1.8rem);
+            margin: 1rem 0;
+            max-width: 90%;
+            line-height: 1.8;
+            padding: 0 1rem;
+        }
+
+        .message-2025 {
+            color: #cccccc;
+            animation: fadeOut 4s ease-in-out forwards;
+        }
+
+        .message-2026 {
+            color: #ffffff;
+            opacity: 0;
+            animation: fadeIn 4s ease-in-out forwards 4s;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* 音乐播放按钮样式 */
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            z-index: 100;
+            cursor: pointer;
+        }
+        
+        .music-icon {
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ffffff"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>') no-repeat center center;
+            background-size: 60%;
+            animation: rotate 2s linear infinite;
+            animation-play-state: paused;
+        }
+        
+        .music-control.playing .music-icon {
+            animation-play-state: running;
+        }
+        
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .music-control {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas id="snowCanvas"></canvas>
+        <canvas id="fireworksCanvas"></canvas>
+        <div class="text-container">
+            <h1 class="year-2025">2025</h1>
+            <p class="message message-2025">2025，我们携手走过风雨<br>经历了迷茫，也收获了成长<br>那些挑战，让我们更加坚强</p>
+            <h1 class="year-2026">2026</h1>
+            <p class="message message-2026">2026，新的篇章即将开启<br>愿所有的美好都能如期而至<br>愿你我万事如意，心想事成<br>所求皆所愿，所行皆坦途</p>
+        </div>
+        <!-- 音乐播放按钮 -->
+        <div id="music-control" class="music-control">
+            <div class="music-icon"></div>
+        </div>
+    </div>
+    
+    <!-- 音频元素 -->
+    <audio id="background-music" loop>
+        <!-- 使用在线新年音乐链接 -->
+        <source src="https://img.qimuu.xyz/2023/12/10/831f055f04b52.mp3" type="audio/mpeg">
+        您的浏览器不支持音频播放。
+    </audio>
+
+    <script>
+        // 雪花效果
+        const snowCanvas = document.getElementById('snowCanvas');
+        const snowCtx = snowCanvas.getContext('2d');
+        let snowflakes = [];
+
+        // 设置canvas尺寸
+        function resizeCanvas() {
+            snowCanvas.width = window.innerWidth;
+            snowCanvas.height = window.innerHeight;
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // 创建雪花
+        class Snowflake {
+            constructor() {
+                this.x = Math.random() * snowCanvas.width;
+                this.y = Math.random() * -snowCanvas.height;
+                this.radius = Math.random() * 3 + 1;
+                this.speed = Math.random() * 2 + 1;
+                this.opacity = Math.random() * 0.8 + 0.2;
+            }
+
+            update() {
+                this.y += this.speed;
+                this.x += Math.sin(this.y * 0.01) * 0.5;
+
+                if (this.y > snowCanvas.height) {
+                    this.y = Math.random() * -50;
+                    this.x = Math.random() * snowCanvas.width;
+                }
+            }
+
+            draw() {
+                snowCtx.save();
+                snowCtx.globalAlpha = this.opacity;
+                snowCtx.fillStyle = '#ffffff';
+                snowCtx.beginPath();
+                snowCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                snowCtx.fill();
+                snowCtx.restore();
+            }
+        }
+
+        // 初始化雪花
+        function initSnowflakes() {
+            for (let i = 0; i < 150; i++) {
+                snowflakes.push(new Snowflake());
+            }
+        }
+
+        // 动画循环
+        function animateSnow() {
+            snowCtx.clearRect(0, 0, snowCanvas.width, snowCanvas.height);
+            
+            for (let snowflake of snowflakes) {
+                snowflake.update();
+                snowflake.draw();
+            }
+            
+            requestAnimationFrame(animateSnow);
+        }
+
+        // 烟花效果
+        const fireworksCanvas = document.getElementById('fireworksCanvas');
+        const fireworksCtx = fireworksCanvas.getContext('2d');
+        let fireworks = [];
+
+        fireworksCanvas.width = window.innerWidth;
+        fireworksCanvas.height = window.innerHeight;
+        window.addEventListener('resize', () => {
+            fireworksCanvas.width = window.innerWidth;
+            fireworksCanvas.height = window.innerHeight;
+        });
+
+        class Firework {
+            constructor() {
+                this.x = Math.random() * fireworksCanvas.width;
+                this.y = fireworksCanvas.height;
+                this.targetY = Math.random() * fireworksCanvas.height * 0.5;
+                this.speed = Math.random() * 3 + 2;
+                this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                this.particles = [];
+                this.exploded = false;
+            }
+
+            update() {
+                if (!this.exploded) {
+                    this.y -= this.speed;
+                    if (this.y <= this.targetY) {
+                        this.explode();
+                    }
+                } else {
+                    for (let i = this.particles.length - 1; i >= 0; i--) {
+                        this.particles[i].update();
+                        if (this.particles[i].opacity <= 0) {
+                            this.particles.splice(i, 1);
+                        }
+                    }
+                }
+            }
+
+            explode() {
+                this.exploded = true;
+                for (let i = 0; i < 100; i++) {
+                    this.particles.push(new Particle(this.x, this.y, this.color));
+                }
+            }
+
+            draw() {
+                if (!this.exploded) {
+                    fireworksCtx.save();
+                    fireworksCtx.fillStyle = this.color;
+                    fireworksCtx.beginPath();
+                    fireworksCtx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                    fireworksCtx.fill();
+                    fireworksCtx.restore();
+                } else {
+                    for (let particle of this.particles) {
+                        particle.draw();
+                    }
+                }
+            }
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.vx = (Math.random() - 0.5) * 8;
+                this.vy = (Math.random() - 0.5) * 8;
+                this.opacity = 1;
+                this.gravity = 0.1;
+            }
+
+            update() {
+                this.vy += this.gravity;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.opacity -= 0.01;
+            }
+
+            draw() {
+                fireworksCtx.save();
+                fireworksCtx.globalAlpha = this.opacity;
+                fireworksCtx.fillStyle = this.color;
+                fireworksCtx.beginPath();
+                fireworksCtx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                fireworksCtx.fill();
+                fireworksCtx.restore();
+            }
+        }
+
+        function animateFireworks() {
+            fireworksCtx.clearRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+            
+            for (let i = fireworks.length - 1; i >= 0; i--) {
+                fireworks[i].update();
+                fireworks[i].draw();
+                if (fireworks[i].exploded && fireworks[i].particles.length === 0) {
+                    fireworks.splice(i, 1);
+                }
+            }
+            
+            requestAnimationFrame(animateFireworks);
+        }
+
+        // 定时发射烟花
+        function launchFireworks() {
+            fireworks.push(new Firework());
+        }
+
+        // 音乐控制
+        const music = document.getElementById('background-music');
+        const musicControl = document.getElementById('music-control');
+        let musicPlaying = false;
+
+        // 尝试播放音乐
+        function playMusic() {
+            music.play().then(() => {
+                musicPlaying = true;
+                musicControl.classList.add('playing');
+            }).catch(error => {
+                console.log('音乐播放需要用户交互:', error);
+            });
+        }
+
+        // 暂停音乐
+        function pauseMusic() {
+            music.pause();
+            musicPlaying = false;
+            musicControl.classList.remove('playing');
+        }
+
+        // 音乐控制按钮点击事件
+        musicControl.addEventListener('click', () => {
+            if (musicPlaying) {
+                pauseMusic();
+            } else {
+                playMusic();
+            }
+        });
+
+        // 自动播放尝试
+        // 1. 页面加载完成后立即尝试
+        window.addEventListener('load', playMusic);
+        
+        // 2. DOMContentLoaded时尝试
+        document.addEventListener('DOMContentLoaded', playMusic);
+        
+        // 3. 微信WeixinJSBridgeReady事件（微信专用）
+        document.addEventListener('WeixinJSBridgeReady', () => {
+            playMusic();
+        });
+        
+        // 4. 页面可见性变化时尝试
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                playMusic();
+            }
+        });
+
+        // 5. 点击页面任意位置触发音乐播放（解决微信自动播放限制）
+        document.addEventListener('click', playMusic, { once: true });
+        document.addEventListener('touchstart', playMusic, { once: true });
+        document.addEventListener('touchend', playMusic, { once: true });
+        document.addEventListener('mousedown', playMusic, { once: true });
+        document.addEventListener('mouseup', playMusic, { once: true });
+
+        // 初始化和启动动画
+        initSnowflakes();
+        animateSnow();
+        animateFireworks();
+
+        // 延迟启动烟花
+        setTimeout(() => {
+            launchFireworks();
+            setInterval(launchFireworks, 1500);
+        }, 4000);
+
+        // 优化手机性能，减少雪花数量
+        if (window.innerWidth < 768) {
+            snowflakes = snowflakes.slice(0, 50);
+        }
+    </script>
+</body>
+</html>
