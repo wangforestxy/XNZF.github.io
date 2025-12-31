@@ -9,8 +9,13 @@
     <meta property="og:title" content="2026新年祝福">
     <meta property="og:description" content="2026，愿万事如意，心想事成">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="">
-    <meta property="og:image" content="">
+    <meta property="og:url" content="https://wangforestry.github.io">
+    <meta property="og:image" content="https://img.qimuu.xyz/2023/12/10/831f055f04b52.jpg">
+    <!-- 微信内置浏览器配置 -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <!-- 微信JS-SDK配置（可选，用于增强微信兼容性） -->
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
     <title>2026新年祝福</title>
     <style>
         * {
@@ -93,9 +98,12 @@
         .message {
             font-size: clamp(1rem, 5vw, 1.8rem);
             margin: 1rem 0;
-            max-width: 90%;
+            max-width: 85%;
             line-height: 1.8;
             padding: 0 1rem;
+            word-wrap: break-word;
+            white-space: pre-line;
+            text-align: center;
         }
 
         .message-2025 {
@@ -382,6 +390,22 @@
             fireworks.push(new Firework());
         }
 
+        // 微信JS-SDK初始化（增强微信兼容性）
+        if (typeof wx !== 'undefined') {
+            wx.config({
+                debug: false,
+                appId: '',
+                timestamp: 0,
+                nonceStr: '',
+                signature: '',
+                jsApiList: []
+            });
+            
+            wx.ready(function() {
+                console.log('微信JS-SDK初始化完成');
+            });
+        }
+
         // 音乐控制
         const music = document.getElementById('background-music');
         const musicControl = document.getElementById('music-control');
@@ -438,6 +462,14 @@
         document.addEventListener('touchend', playMusic, { once: true });
         document.addEventListener('mousedown', playMusic, { once: true });
         document.addEventListener('mouseup', playMusic, { once: true });
+        
+        // 微信内置浏览器兼容性处理
+        if (navigator.userAgent.indexOf('MicroMessenger') > -1) {
+            // 微信环境下的特殊处理
+            console.log('当前在微信内置浏览器中');
+            // 主动触发一次触摸事件监听
+            document.body.addEventListener('touchstart', function() {}, false);
+        }
 
         // 初始化和启动动画
         initSnowflakes();
