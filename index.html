@@ -96,14 +96,42 @@
         }
 
         .message {
-            font-size: clamp(1rem, 5vw, 1.8rem);
-            margin: 1rem 0;
-            max-width: 85%;
+            font-size: clamp(0.9rem, 4vw, 1.5rem);
+            margin: 0.8rem 0;
+            max-width: 75%;
             line-height: 1.8;
             padding: 0 1rem;
-            word-wrap: break-word;
-            white-space: pre-line;
             text-align: center;
+            letter-spacing: 0.5px;
+            word-spacing: 1px;
+            /* 中文排版优化 */
+            word-break: keep-all;
+            overflow-wrap: break-word;
+            hyphens: none;
+        }
+
+        /* 针对小屏幕的额外优化 */
+        @media (max-width: 768px) {
+            .message {
+                font-size: clamp(0.8rem, 3.5vw, 1.3rem);
+                max-width: 90%;
+                padding: 0 0.5rem;
+                line-height: 1.7;
+            }
+            
+            .year-2025,
+            .year-2026 {
+                font-size: clamp(1.5rem, 7vw, 3.5rem);
+            }
+        }
+
+        /* 针对超小屏幕的优化 */
+        @media (max-width: 360px) {
+            .message {
+                font-size: clamp(0.75rem, 3vw, 1.2rem);
+                max-width: 95%;
+                line-height: 1.6;
+            }
         }
 
         .message-2025 {
@@ -198,9 +226,18 @@
         <canvas id="fireworksCanvas"></canvas>
         <div class="text-container">
             <h1 class="year-2025">2025</h1>
-            <p class="message message-2025">2025，我们携手走过风雨<br>经历了迷茫，也收获了成长<br>那些挑战，让我们更加坚强</p>
+            <p class="message message-2025">
+                2025，我们携手走过风雨<br>
+                经历了迷茫，也收获了成长<br>
+                那些挑战，让我们更加坚强
+            </p>
             <h1 class="year-2026">2026</h1>
-            <p class="message message-2026">2026，新的篇章即将开启<br>愿所有的美好都能如期而至<br>愿你我万事如意，心想事成<br>所求皆所愿，所行皆坦途</p>
+            <p class="message message-2026">
+                2026，新的篇章即将开启<br>
+                愿所有的美好都能如期而至<br>
+                愿你我万事如意，心想事成<br>
+                所求皆所愿，所行皆坦途
+            </p>
         </div>
         <!-- 音乐播放按钮 -->
         <div id="music-control" class="music-control">
