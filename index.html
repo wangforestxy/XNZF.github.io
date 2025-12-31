@@ -33,14 +33,15 @@
 
         .container {
             position: relative;
-            height: 100%;
-            width: 100%;
+            height: 100vh;
+            width: 100vw;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             animation: backgroundChange 8s ease-in-out forwards;
+            overflow: hidden;
         }
 
         @keyframes backgroundChange {
@@ -69,18 +70,43 @@
             z-index: 2;
         }
 
-        .text-container {
-            position: relative;
+        /* 年份内容容器 - 绝对居中 */
+        .year-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             z-index: 3;
             text-align: center;
+            width: 100%;
+            max-width: 95%;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 2025年和2026年内容共享样式 */
+        .year-2025-content,
+        .year-2026-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
         }
 
         .year-2025,
         .year-2026 {
-            font-size: clamp(2rem, 10vw, 5rem);
+            font-size: clamp(4rem, 20vw, 9rem);
             font-weight: bold;
-            margin: 1rem 0;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.7);
+            line-height: 1.1;
+            display: block;
+            width: auto;
+            margin: 0 0 1.5rem 0;
+            padding: 0;
         }
 
         .year-2025 {
@@ -91,46 +117,54 @@
         .year-2026 {
             color: #ffd700;
             opacity: 0;
-            transform: scale(0.8);
-            animation: fadeInScale 4s ease-in-out forwards 4s;
+            transform: scale(0.9);
+            animation: fadeInScaleFixed 4s ease-in-out forwards 4s;
         }
 
         .message {
-            font-size: clamp(0.9rem, 4vw, 1.5rem);
-            margin: 0.8rem 0;
-            max-width: 75%;
-            line-height: 1.8;
+            font-size: clamp(1.5rem, 8vw, 2.5rem);
+            margin: 0.5rem auto;
+            max-width: 85%;
+            line-height: 2.2;
             padding: 0 1rem;
             text-align: center;
-            letter-spacing: 0.5px;
-            word-spacing: 1px;
+            letter-spacing: 1.5px;
+            word-spacing: 3px;
             /* 中文排版优化 */
             word-break: keep-all;
             overflow-wrap: break-word;
             hyphens: none;
+            display: inline-block;
         }
 
         /* 针对小屏幕的额外优化 */
         @media (max-width: 768px) {
             .message {
-                font-size: clamp(0.8rem, 3.5vw, 1.3rem);
-                max-width: 90%;
+                font-size: clamp(1.3rem, 7vw, 2rem);
+                max-width: 95%;
                 padding: 0 0.5rem;
-                line-height: 1.7;
+                line-height: 2;
             }
             
             .year-2025,
             .year-2026 {
-                font-size: clamp(1.5rem, 7vw, 3.5rem);
+                font-size: clamp(3.5rem, 18vw, 7rem);
+                margin: 1rem 0;
             }
         }
 
         /* 针对超小屏幕的优化 */
         @media (max-width: 360px) {
             .message {
-                font-size: clamp(0.75rem, 3vw, 1.2rem);
-                max-width: 95%;
-                line-height: 1.6;
+                font-size: clamp(1.2rem, 6vw, 1.8rem);
+                max-width: 98%;
+                line-height: 1.9;
+            }
+            
+            .year-2025,
+            .year-2026 {
+                font-size: clamp(3rem, 15vw, 6rem);
+                margin: 0.8rem 0;
             }
         }
 
@@ -168,6 +202,18 @@
         }
 
         @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: translate(0, 5%) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+        }
+
+        /* 固定的淡入缩放动画，没有垂直偏移 */
+        @keyframes fadeInScaleFixed {
             from {
                 opacity: 0;
                 transform: scale(0.8);
@@ -224,13 +270,19 @@
     <div class="container">
         <canvas id="snowCanvas"></canvas>
         <canvas id="fireworksCanvas"></canvas>
-        <div class="text-container">
+        
+        <!-- 2025年内容 -->
+        <div class="year-content year-2025-content">
             <h1 class="year-2025">2025</h1>
             <p class="message message-2025">
                 2025，我们携手走过风雨<br>
                 经历了迷茫，也收获了成长<br>
                 那些挑战，让我们更加坚强
             </p>
+        </div>
+        
+        <!-- 2026年内容 -->
+        <div class="year-content year-2026-content">
             <h1 class="year-2026">2026</h1>
             <p class="message message-2026">
                 2026，新的篇章即将开启<br>
@@ -239,14 +291,15 @@
                 所求皆所愿，所行皆坦途
             </p>
         </div>
+        
         <!-- 音乐播放按钮 -->
         <div id="music-control" class="music-control">
             <div class="music-icon"></div>
         </div>
     </div>
     
-    <!-- 音频元素 -->
-    <audio id="background-music" loop>
+    <!-- 音频元素：优化自动播放 -->
+    <audio id="background-music" loop autoplay preload="auto" muted>
         <!-- 使用在线新年音乐链接 -->
         <source src="https://img.qimuu.xyz/2023/12/10/831f055f04b52.mp3" type="audio/mpeg">
         您的浏览器不支持音频播放。
@@ -440,6 +493,8 @@
             
             wx.ready(function() {
                 console.log('微信JS-SDK初始化完成');
+                // 微信环境下尝试播放音乐
+                tryPlayMusic();
             });
         }
 
@@ -448,13 +503,20 @@
         const musicControl = document.getElementById('music-control');
         let musicPlaying = false;
 
-        // 尝试播放音乐
-        function playMusic() {
+        // 核心播放函数：处理静音状态和播放
+        function tryPlayMusic() {
+            // 先取消静音
+            music.muted = false;
+            music.volume = 0.5; // 设置合适的音量
+            
             music.play().then(() => {
                 musicPlaying = true;
                 musicControl.classList.add('playing');
+                console.log('音乐播放成功');
             }).catch(error => {
                 console.log('音乐播放需要用户交互:', error);
+                // 失败后继续尝试监听用户交互
+                setupInteractionListeners();
             });
         }
 
@@ -465,48 +527,62 @@
             musicControl.classList.remove('playing');
         }
 
-        // 音乐控制按钮点击事件
-        musicControl.addEventListener('click', () => {
+        // 切换播放状态
+        function toggleMusic() {
             if (musicPlaying) {
                 pauseMusic();
             } else {
-                playMusic();
+                tryPlayMusic();
             }
-        });
+        }
 
-        // 自动播放尝试
+        // 设置用户交互监听器
+        function setupInteractionListeners() {
+            // 多种交互方式触发音乐播放
+            const interactionEvents = ['click', 'touchstart', 'touchend', 'mousedown', 'mouseup', 'keydown'];
+            
+            interactionEvents.forEach(event => {
+                document.addEventListener(event, tryPlayMusic, { once: true, passive: true });
+            });
+        }
+
+        // 音乐控制按钮点击事件
+        musicControl.addEventListener('click', toggleMusic);
+
+        // 自动播放尝试（多种时机）
         // 1. 页面加载完成后立即尝试
-        window.addEventListener('load', playMusic);
+        window.addEventListener('load', () => {
+            setTimeout(tryPlayMusic, 100);
+        });
         
         // 2. DOMContentLoaded时尝试
-        document.addEventListener('DOMContentLoaded', playMusic);
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(tryPlayMusic, 500);
+        });
         
         // 3. 微信WeixinJSBridgeReady事件（微信专用）
         document.addEventListener('WeixinJSBridgeReady', () => {
-            playMusic();
+            setTimeout(tryPlayMusic, 300);
         });
         
         // 4. 页面可见性变化时尝试
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible') {
-                playMusic();
+                setTimeout(tryPlayMusic, 200);
             }
         });
-
-        // 5. 点击页面任意位置触发音乐播放（解决微信自动播放限制）
-        document.addEventListener('click', playMusic, { once: true });
-        document.addEventListener('touchstart', playMusic, { once: true });
-        document.addEventListener('touchend', playMusic, { once: true });
-        document.addEventListener('mousedown', playMusic, { once: true });
-        document.addEventListener('mouseup', playMusic, { once: true });
         
-        // 微信内置浏览器兼容性处理
+        // 5. 微信内置浏览器兼容性处理
         if (navigator.userAgent.indexOf('MicroMessenger') > -1) {
-            // 微信环境下的特殊处理
             console.log('当前在微信内置浏览器中');
             // 主动触发一次触摸事件监听
             document.body.addEventListener('touchstart', function() {}, false);
+            // 微信环境下特殊处理
+            setupInteractionListeners();
         }
+        
+        // 初始化交互监听器
+        setupInteractionListeners();
 
         // 初始化和启动动画
         initSnowflakes();
